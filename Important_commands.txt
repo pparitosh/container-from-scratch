@@ -1,0 +1,62 @@
+Readme:
+
+List of commands.
+
+1. aws ec2 run-instances \
+--image-id <ami-id> \
+--instance-type <instance-type> \
+--subnet-id <subnet-id> \
+--security-group-ids <security-group-id> <security-group-id> … \
+--key-name <ec2-key-pair-name>
+
+2. aws ec2 run-instances \
+--image-id ami-062df10d14676e201 \
+--instance-type t2.micro \
+--subnet-id subnet-()\
+--security-group-ids sg-() \
+--key-name DeafultKeyPair
+
+3. ssh -i "DeafultKeyPair.pem" ubuntu@ec2-15-207-117-45.ap-south-1.compute.amazonaws.com
+
+
+* 		apt update 
+* 		RUN apt install –y apache2 
+* 		RUN apt install –y apache2-utils 
+* 		RUN apt clean 
+* 
+
+Sample Dockerfile:
+
+************
+FROM ubuntu 
+RUN apt-get update 
+RUN apt-get install apache2 -y
+RUN apt-get install apache2-utils -y
+RUN apt-get clean 
+EXPOSE 80
+CMD [“/usr/sbin/apache2ctl start”, “-D”, “FOREGROUND”]
+
+************
+4. docker build -t apache_image_k8:v1.0 .
+
+5. docker images
+
+6. aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin XXXXXXXX.dkr.ecr.ap-south-1.amazonaws.com
+
+7. aws ecr create-repository \
+    --repository-name bits-project/apache2-web
+
+8. docker tag 59f840a10c3f XXXXXXXX.dkr.ecr.ap-south-1.amazonaws.com/bits-project/apache2-web:latest
+
+9. docker push XXXXXXXX.dkr.ecr.ap-south-1.amazonaws.com/bits-project/apache2-web:latest
+
+10. aws ecr list-images \
+    --repository-name bits-project/apache2-web
+
+11. kubectl apply -f apache2-pod.yaml 
+
+12. kubectl get pods -l app=apache -o wide
+
+13. kubectl exec -it <pod> /bin/bash
+
+14. kubectl delete pod <pod>
